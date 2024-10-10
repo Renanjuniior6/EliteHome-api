@@ -1,6 +1,5 @@
-import { knex } from "@/database";
+import type { PropertyRepository } from "@/database/repositories/property";
 import { Property } from "@/entities/property";
-import { properties } from "@/http/controllers/properties/route";
 
 export type CreatePropertyUseCaseRequest = {
 	name: string;
@@ -16,6 +15,9 @@ type CreatePropertyUseCaseResponse = {
 };
 
 export class CreatePropertyUseCase {
+
+	constructor(private repository: PropertyRepository) {} // Hackzin para pegar o repository
+
 	async execute({
 		name,
 		totalValue,
@@ -32,18 +34,8 @@ export class CreatePropertyUseCase {
 			state,
 			size,
 		});
-		// TODO salvar as properties no banco de dados
 
-		const [ createdProperty ] = await knex("properties")
-			.insert({
-				name: property.name,
-                size: property.size,
-                city: property.city,
-                state: property.state,
-				total_value: property.totalValue,
-				number_of_rooms: property.numberOfRooms,
-			})
-			.returning("*");
+		const createdProperty = await this.repository.create(property)
 
 		return { property: createdProperty };
 	}
