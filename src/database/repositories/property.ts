@@ -4,8 +4,7 @@ import { PropertySchema } from "../schemas/property";
 
 export class PropertyRepository {
 	async create(property: Property): Promise<Property> {
-
-	const [createdProperty] = await knex<PropertySchema>("properties")
+		const [createdProperty] = await knex<PropertySchema>("properties")
 			.insert({
 				name: property.name,
 				size: property.size,
@@ -16,8 +15,18 @@ export class PropertyRepository {
 			})
 			.returning("*");
 
-	const propertyEntity = new PropertySchema(createdProperty).toEntity();
+		const propertyEntity = new PropertySchema(createdProperty).toEntity();
 
-    return propertyEntity
-    }
+		return propertyEntity;
+	}
+
+	async find(): Promise<Property[]> {
+		const properties = await knex<PropertySchema>("properties");
+
+		const propertiesEntities = properties.map((property) =>
+			new PropertySchema(property).toEntity(),
+		);
+
+		return propertiesEntities;
+	}
 }
