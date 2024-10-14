@@ -1,8 +1,5 @@
 import { PropertyRepository } from "@/database/repositories/property";
-import {
-	CreatePropertyUseCase,
-	type CreatePropertyUseCaseRequest,
-} from "@/use-cases/create-property";
+import { CreatePropertyUseCase } from "@/use-cases/create-property";
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 
@@ -11,11 +8,24 @@ export async function create(request: FastifyRequest, reply: FastifyReply) {
 
 	const schema = z.object({
 		name: z.string().min(1).max(255),
-		totalValue: z.number().int(),
-		numberOfRooms: z.number().int(),
-		city: z.string().min(1).max(255),
-		state: z.string().length(2), // "length -> vc tem q passar obrigatoriamente 2 caracteres"
 		size: z.number(),
+		totalValue: z.number().int(),
+		rentValue: z.number().int(),
+		condoValue: z.number().int(),
+		taxValue: z.number().int(),
+		numberOfRooms: z.number().int(), // "length -> vc tem q passar obrigatoriamente 2 caracteres"
+		numberOfBathrooms: z.number().int(),
+		garageSlots: z.number().int(),
+		arePetsAllowed: z.boolean(),
+		isNextToSubway: z.boolean(),
+		isActive: z.boolean(),
+		description: z.string().max(1000),
+		isSale: z.boolean(),
+		isRent: z.boolean(),
+		address: z.string(),
+		latitude: z.number(),
+		longitude: z.number(),
+		isFurnished: z.boolean(),
 	});
 
 	const data = schema.parse(request.body);
